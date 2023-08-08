@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { css } from '@linaria/core';
+import { styled } from 'styled-components';
 
 import { useLatestFunc } from './hooks';
 import { createCellEvent, getCellClassname, getCellStyle, onEditorNavigation } from './utils';
@@ -28,9 +28,11 @@ import type {
  * We must also rely on React's event capturing/bubbling to handle elements rendered in a portal.
  */
 
-const cellEditing = css`
-  @layer rdg.EditCell {
-    padding: 0;
+const CellEditing = styled.div`
+  &.cell-editing {
+    @layer rdg.EditCell {
+      padding: 0;
+    }
   }
 `;
 
@@ -39,7 +41,9 @@ type SharedCellRendererProps<R, SR> = Pick<CellRendererProps<R, SR>, 'colSpan'>;
 interface EditCellProps<R, SR>
   extends Omit<RenderEditCellProps<R, SR>, 'onRowChange' | 'onClose'>,
     SharedCellRendererProps<R, SR> {
+  dataKey: keyof R;
   rowIdx: number;
+  showBorder: boolean;
   onRowChange: (row: R, commitChanges: boolean, shouldFocusCell: boolean) => void;
   closeEditor: (shouldFocusCell: boolean) => void;
   navigate: (event: React.KeyboardEvent<HTMLDivElement>) => void;
@@ -47,10 +51,12 @@ interface EditCellProps<R, SR>
 }
 
 export default function EditCell<R, SR>({
+  dataKey,
   column,
   colSpan,
   row,
   rowIdx,
+  showBorder,
   onRowChange,
   closeEditor,
   onKeyDown,
@@ -130,12 +136,13 @@ export default function EditCell<R, SR>({
   const className = getCellClassname(
     column,
     'rdg-editor-container',
-    !column.editorOptions?.displayCellContent && cellEditing,
-    typeof cellClass === 'function' ? cellClass(row) : cellClass
+    !column.editorOptions?.displayCellContent && 'cell-editing',
+    typeof cellClass === 'function' ? cellClass(row) : cellClass,
+    showBorder && 'show-border'
   );
 
   return (
-    <div
+    <CellEditing
       role="gridcell"
       aria-colindex={column.idx + 1} // aria-colindex is 1-based
       aria-colspan={colSpan}
@@ -153,16 +160,17 @@ export default function EditCell<R, SR>({
             onRowChange: onEditorRowChange,
             onClose
           })}
-          {column.editorOptions?.displayCellContent &&
-            column.renderCell({
-              column,
-              row,
-              isCellEditable: true,
-              tabIndex: -1,
-              onRowChange: onEditorRowChange
-            })}
+          {column.editorOptions?.displayCellContent && column.render
+            ? column.render(row[dataKey], row, rowIdx)
+            : column.renderCell({
+                column,
+                row,
+                isCellEditable: true,
+                tabIndex: -1,
+                onRowChange: onEditorRowChange
+              })}
         </>
       )}
-    </div>
+    </CellEditing>
   );
 }

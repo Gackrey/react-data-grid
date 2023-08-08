@@ -1,8 +1,8 @@
-import { css } from '@linaria/core';
+import styled from 'styled-components';
 
 import type { CalculatedColumn } from '../types';
 
-const measuringCellClassname = css`
+const StyledMeasuringCellClassname = styled.div`
   @layer rdg.MeasuringCell {
     contain: strict;
     grid-row: 1;
@@ -12,9 +12,8 @@ const measuringCellClassname = css`
 
 export function renderMeasuringCells<R, SR>(viewportColumns: readonly CalculatedColumn<R, SR>[]) {
   return viewportColumns.map(({ key, idx, minWidth, maxWidth }) => (
-    <div
+    <StyledMeasuringCellClassname
       key={key}
-      className={measuringCellClassname}
       style={{ gridColumnStart: idx + 1, minWidth, maxWidth }}
       data-measuring-cell-key={key}
     />

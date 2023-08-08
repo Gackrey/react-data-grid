@@ -22,6 +22,7 @@ function Row<R, SR>(
     viewportColumns,
     selectedCellEditor,
     selectedCellDragHandle,
+    showBorder,
     onCellClick,
     onCellDoubleClick,
     onCellContextMenu,
@@ -70,9 +71,11 @@ function Row<R, SR>(
     } else {
       cells.push(
         <Cell
+          dataKey={column.key as keyof R}
           key={column.key}
           column={column}
           colSpan={colSpan}
+          showBorder={showBorder}
           row={row}
           rowIdx={rowIdx}
           isCopied={copiedCellIdx === idx}

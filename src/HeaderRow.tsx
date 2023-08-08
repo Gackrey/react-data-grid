@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { css } from '@linaria/core';
+import styled from 'styled-components';
 import clsx from 'clsx';
 
 import { getColSpan, getRowStyle } from './utils';
@@ -22,9 +22,10 @@ export interface HeaderRowProps<R, SR, K extends React.Key> extends SharedDataGr
   selectedCellIdx: number | undefined;
   shouldFocusGrid: boolean;
   direction: Direction;
+  showBorder: boolean;
 }
 
-const headerRow = css`
+const StyledHeaderRow = styled.div`
   @layer rdg.HeaderRow {
     display: contents;
     line-height: var(--rdg-header-row-height);
@@ -44,8 +45,6 @@ const headerRow = css`
   }
 `;
 
-const headerRowClassname = `rdg-header-row ${headerRow}`;
-
 function HeaderRow<R, SR, K extends React.Key>({
   columns,
   onColumnResize,
@@ -55,7 +54,8 @@ function HeaderRow<R, SR, K extends React.Key>({
   selectedCellIdx,
   selectCell,
   shouldFocusGrid,
-  direction
+  direction,
+  showBorder
 }: HeaderRowProps<R, SR, K>) {
   const cells = [];
   for (let index = 0; index < columns.length; index++) {
@@ -77,21 +77,22 @@ function HeaderRow<R, SR, K extends React.Key>({
         selectCell={selectCell}
         shouldFocusGrid={shouldFocusGrid && index === 0}
         direction={direction}
+        showBorder={showBorder}
       />
     );
   }
 
   return (
-    <div
+    <StyledHeaderRow
       role="row"
       aria-rowindex={1} // aria-rowindex is 1 based
-      className={clsx(headerRowClassname, {
+      className={clsx('rdg-header-row', {
         [rowSelectedClassname]: selectedCellIdx === -1
       })}
       style={getRowStyle(1)}
     >
       {cells}
-    </div>
+    </StyledHeaderRow>
   );
 }
 

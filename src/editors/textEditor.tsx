@@ -1,37 +1,39 @@
-import { css } from '@linaria/core';
+import styled from 'styled-components';
 
 import type { RenderEditCellProps } from '../types';
 
-const textEditorInternalClassname = css`
-  @layer rdg.TextEditor {
-    appearance: none;
+const StyledTextEditorInternal = styled.input`
+  &.rdg-editor {
+    @layer rdg.TextEditor {
+      appearance: none;
 
-    box-sizing: border-box;
-    inline-size: 100%;
-    block-size: 100%;
-    padding-block: 0;
-    padding-inline: 6px;
-    border: 2px solid #ccc;
-    vertical-align: top;
-    color: var(--rdg-color);
-    background-color: var(--rdg-background-color);
+      box-sizing: border-box;
+      inline-size: 100%;
+      block-size: 100%;
+      padding-block: 0;
+      padding-inline: 6px;
+      border: 2px solid #ccc;
+      vertical-align: top;
+      color: var(--rdg-color);
+      background-color: var(--rdg-background-color);
 
-    font-family: inherit;
-    font-size: var(--rdg-font-size);
+      font-family: inherit;
+      font-size: var(--rdg-font-size);
 
-    &:focus {
-      border-color: var(--rdg-selection-color);
-      outline: none;
-    }
+      &:focus {
+        border-color: var(--rdg-selection-color);
+        outline: none;
+      }
 
-    &::placeholder {
-      color: #999;
-      opacity: 1;
+      &::placeholder {
+        color: #999;
+        opacity: 1;
+      }
     }
   }
 `;
 
-export const textEditorClassname = `rdg-text-editor ${textEditorInternalClassname}`;
+export const textEditorClassname = 'rdg-text-editor rdg-editor';
 
 function autoFocusAndSelect(input: HTMLInputElement | null) {
   input?.focus();
@@ -45,8 +47,8 @@ export default function textEditor<TRow, TSummaryRow>({
   onClose
 }: RenderEditCellProps<TRow, TSummaryRow>) {
   return (
-    <input
-      className={textEditorClassname}
+    <StyledTextEditorInternal
+      className="rdg-text-editor"
       ref={autoFocusAndSelect}
       value={row[column.key as keyof TRow] as unknown as string}
       onChange={(event) => onRowChange({ ...row, [column.key]: event.target.value })}

@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import styled from 'styled-components';
 import { css } from '@linaria/core';
 
 import { useRovingTabIndex } from './hooks';
@@ -9,6 +10,15 @@ export const summaryCellClassname = css`
   @layer rdg.SummaryCell {
     inset-block-start: var(--rdg-summary-row-top);
     inset-block-end: var(--rdg-summary-row-bottom);
+  }
+`;
+
+export const StyledSummaryCell = styled.div`
+  &.summary-cell {
+    @layer rdg.SummaryCell {
+      inset-block-start: var(--rdg-summary-row-top);
+      inset-block-end: var(--rdg-summary-row-bottom);
+    }
   }
 `;
 
@@ -33,7 +43,7 @@ function SummaryCell<R, SR>({
   const { summaryCellClass } = column;
   const className = getCellClassname(
     column,
-    summaryCellClassname,
+    'summary-cell',
     typeof summaryCellClass === 'function' ? summaryCellClass(row) : summaryCellClass
   );
 
@@ -42,7 +52,7 @@ function SummaryCell<R, SR>({
   }
 
   return (
-    <div
+    <StyledSummaryCell
       role="gridcell"
       aria-colindex={column.idx + 1}
       aria-colspan={colSpan}
@@ -54,7 +64,7 @@ function SummaryCell<R, SR>({
       onFocus={onFocus}
     >
       {column.renderSummaryCell?.({ column, row, tabIndex: childTabIndex })}
-    </div>
+    </StyledSummaryCell>
   );
 }
 

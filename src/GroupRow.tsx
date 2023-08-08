@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { css } from '@linaria/core';
+import styled from 'styled-components';
 import clsx from 'clsx';
 
 import { RowSelectionProvider } from './hooks';
@@ -10,7 +10,7 @@ import GroupCell from './GroupCell';
 import { cell, cellFrozenLast } from './style/cell';
 import { rowClassname, rowSelectedClassname } from './style/row';
 
-const groupRow = css`
+const StyledGroupRow = styled.div`
   @layer rdg.GroupedRow {
     &:not([aria-selected='true']) {
       background-color: var(--rdg-header-background-color);
@@ -21,8 +21,6 @@ const groupRow = css`
     }
   }
 `;
-
-const groupRowClassname = `rdg-group-row ${groupRow}`;
 
 interface GroupRowRendererProps<R, SR> extends BaseRenderRowProps<R, SR> {
   row: GroupRow<R>;
@@ -53,7 +51,7 @@ function GroupedRow<R, SR>({
 
   return (
     <RowSelectionProvider value={isRowSelected}>
-      <div
+      <StyledGroupRow
         role="row"
         aria-level={row.level + 1} // aria-level is 1-based
         aria-setsize={row.setSize}
@@ -61,7 +59,7 @@ function GroupedRow<R, SR>({
         aria-expanded={row.isExpanded}
         className={clsx(
           rowClassname,
-          groupRowClassname,
+          'rdg-group-row',
           `rdg-row-${rowIdx % 2 === 0 ? 'even' : 'odd'}`,
           selectedCellIdx === -1 && rowSelectedClassname,
           className
@@ -85,7 +83,7 @@ function GroupedRow<R, SR>({
             isGroupByColumn={groupBy.includes(column.key)}
           />
         ))}
-      </div>
+      </StyledGroupRow>
     </RowSelectionProvider>
   );
 }

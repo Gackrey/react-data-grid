@@ -1,9 +1,9 @@
-import { css } from '@linaria/core';
+import styled from 'styled-components';
 
 import type { CalculatedColumn, FillEvent, Position } from './types';
 import type { DataGridProps, SelectCellState } from './DataGrid';
 
-const cellDragHandle = css`
+const StyledCellDragHandle = styled.div`
   @layer rdg.DragHandle {
     cursor: move;
     position: absolute;
@@ -21,8 +21,6 @@ const cellDragHandle = css`
     }
   }
 `;
-
-const cellDragHandleClassname = `rdg-cell-drag-handle ${cellDragHandle}`;
 
 interface Props<R, SR> extends Pick<DataGridProps<R, SR>, 'rows' | 'onRowsChange'> {
   columns: readonly CalculatedColumn<R, SR>[];
@@ -104,8 +102,8 @@ export default function DragHandle<R, SR>({
   }
 
   return (
-    <div
-      className={cellDragHandleClassname}
+    <StyledCellDragHandle
+      className="rdg-cell-drag-handle"
       onMouseDown={handleMouseDown}
       onDoubleClick={handleDoubleClick}
     />

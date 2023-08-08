@@ -7,10 +7,11 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type Maybe<T> = T | undefined | null;
 
 export type StateSetter<S> = React.Dispatch<React.SetStateAction<S>>;
+export type ColumnType = Maybe<string | number | boolean | Date>;
 
 export interface Column<TRow, TSummaryRow = unknown> {
   /** The name of the column. By default it will be displayed in the header cell */
-  readonly name: string | ReactElement;
+  readonly title: string | ReactElement;
   /** A unique key to distinguish each column */
   readonly key: string;
   /** Column width. If not specified, it will be determined automatically based on grid width and specified widths of other columns */
@@ -25,6 +26,7 @@ export interface Column<TRow, TSummaryRow = unknown> {
   /** Render function used to render the content of the column's header cell */
   readonly renderHeaderCell?: Maybe<(props: RenderHeaderCellProps<TRow, TSummaryRow>) => ReactNode>;
   /** Render function used to render the content of cells */
+  readonly render?: Maybe<(value: TRow[keyof TRow], props: TRow, tabIndex: number) => ReactNode>;
   readonly renderCell?: Maybe<(props: RenderCellProps<TRow, TSummaryRow>) => ReactNode>;
   /** Render function used to render the content of summary cells */
   readonly renderSummaryCell?: Maybe<
@@ -121,6 +123,8 @@ export interface CellRendererProps<TRow, TSummaryRow>
       'style' | 'children' | 'onClick' | 'onDoubleClick' | 'onContextMenu'
     > {
   column: CalculatedColumn<TRow, TSummaryRow>;
+  dataKey: keyof TRow;
+  showBorder: boolean;
   colSpan: number | undefined;
   isCopied: boolean;
   isDraggedOver: boolean;
@@ -186,6 +190,7 @@ export interface BaseRenderRowProps<TRow, TSummaryRow = unknown>
 export interface RenderRowProps<TRow, TSummaryRow = unknown>
   extends BaseRenderRowProps<TRow, TSummaryRow> {
   row: TRow;
+  showBorder: boolean;
   lastFrozenColumnIndex: number;
   copiedCellIdx: number | undefined;
   draggedOverCellIdx: number | undefined;

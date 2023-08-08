@@ -128,6 +128,7 @@ export interface DataGridProps<R, SR = unknown, K extends Key = Key> extends Sha
    * @default 35
    */
   rowHeight?: Maybe<number | ((row: R) => number)>;
+  border?: Maybe<boolean>;
   /**
    * The height of the header row in pixels
    * @default 35
@@ -230,6 +231,7 @@ function DataGrid<R, SR, K extends Key>(
     renderers,
     className,
     style,
+    border,
     rowClass,
     direction: rawDirection,
     // ARIA
@@ -257,6 +259,7 @@ function DataGrid<R, SR, K extends Key>(
   const noRowsFallback = renderers?.noRowsFallback ?? defaultRenderers?.noRowsFallback;
   const enableVirtualization = rawEnableVirtualization ?? true;
   const direction = rawDirection ?? 'ltr';
+  const showBorder = border ?? true;
 
   const headerRowsCount = 1;
   const topSummaryRowsCount = topSummaryRows?.length ?? 0;
@@ -844,6 +847,7 @@ function DataGrid<R, SR, K extends Key>(
 
     return (
       <EditCell
+        dataKey={column.key as keyof R}
         key={column.key}
         column={column}
         colSpan={colSpan}
@@ -853,6 +857,7 @@ function DataGrid<R, SR, K extends Key>(
         closeEditor={closeEditor}
         onKeyDown={onCellKeyDown}
         navigate={navigate}
+        showBorder={showBorder}
       />
     );
   }
@@ -944,7 +949,8 @@ function DataGrid<R, SR, K extends Key>(
           onRowChange: handleFormatterRowChangeLatest,
           selectCell: selectCellLatest,
           selectedCellDragHandle: getDragHandle(rowIdx),
-          selectedCellEditor: getCellEditor(rowIdx)
+          selectedCellEditor: getCellEditor(rowIdx),
+          showBorder
         })
       );
     }
@@ -1032,6 +1038,7 @@ function DataGrid<R, SR, K extends Key>(
               selectCell={selectHeaderCellLatest}
               shouldFocusGrid={!selectedCellIsWithinSelectionBounds}
               direction={direction}
+              showBorder={showBorder}
             />
           </RowSelectionProvider>
           {rows.length === 0 && noRowsFallback ? (

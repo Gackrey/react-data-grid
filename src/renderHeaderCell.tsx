@@ -1,9 +1,9 @@
-import { css } from '@linaria/core';
+import styled from 'styled-components';
 
 import type { RenderHeaderCellProps } from './types';
 import { useDefaultRenderers } from './DataGridDefaultRenderersProvider';
 
-const headerSortCell = css`
+const StyledHeaderSortCell = styled.span`
   @layer rdg.SortableHeaderCell {
     cursor: pointer;
     display: flex;
@@ -14,9 +14,7 @@ const headerSortCell = css`
   }
 `;
 
-const headerSortCellClassname = `rdg-header-sort-cell ${headerSortCell}`;
-
-const headerSortName = css`
+const StyledHeaderSortName = styled.span`
   @layer rdg.SortableHeaderCellName {
     flex-grow: 1;
     overflow: hidden;
@@ -25,7 +23,10 @@ const headerSortName = css`
   }
 `;
 
-const headerSortNameClassname = `rdg-header-sort-name ${headerSortName}`;
+const StyledHeaderSortWrapper = styled.span`
+  display: flex;
+  align-items: center;
+`;
 
 export default function renderHeaderCell<R, SR>({
   column,
@@ -34,7 +35,7 @@ export default function renderHeaderCell<R, SR>({
   onSort,
   tabIndex
 }: RenderHeaderCellProps<R, SR>) {
-  if (!column.sortable) return column.name;
+  if (!column.sortable) return column.title;
 
   return (
     <SortableHeaderCell
@@ -43,7 +44,7 @@ export default function renderHeaderCell<R, SR>({
       priority={priority}
       tabIndex={tabIndex}
     >
-      {column.name}
+      {column.title}
     </SortableHeaderCell>
   );
 }
@@ -79,14 +80,16 @@ function SortableHeaderCell<R, SR>({
   }
 
   return (
-    <span
+    <StyledHeaderSortCell
       tabIndex={tabIndex}
-      className={headerSortCellClassname}
+      className="rdg-header-sort-cell "
       onClick={handleClick}
       onKeyDown={handleKeyDown}
     >
-      <span className={headerSortNameClassname}>{children}</span>
-      <span>{renderSortStatus({ sortDirection, priority })}</span>
-    </span>
+      <StyledHeaderSortName className="rdg-header-sort-name">{children}</StyledHeaderSortName>
+      <StyledHeaderSortWrapper>
+        {renderSortStatus({ sortDirection, priority })}
+      </StyledHeaderSortWrapper>
+    </StyledHeaderSortCell>
   );
 }

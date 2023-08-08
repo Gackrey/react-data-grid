@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import styled from 'styled-components';
 import { css } from '@linaria/core';
 import clsx from 'clsx';
 
@@ -24,24 +25,40 @@ interface SummaryRowProps<R, SR> extends SharedRenderRowProps<R, SR> {
   showBorder: boolean;
 }
 
-const summaryRow = css`
-  @layer rdg.SummaryRow {
-    line-height: var(--rdg-summary-row-height);
+const StyledSummaryRow = styled.div`
+  &.rdg-summary-row {
+    @layer rdg.SummaryRow {
+      line-height: var(--rdg-summary-row-height);
 
-    > .${cell} {
-      position: sticky;
+      > .${cell} {
+        position: sticky;
+      }
     }
   }
-`;
 
-const topSummaryRow = css`
-  @layer rdg.SummaryRow {
-    > .${cell} {
-      z-index: 2;
+  &.rdg-top-summary-row {
+    @layer rdg.SummaryRow {
+      > .${cell} {
+        z-index: 2;
+      }
+
+      > .${cellFrozen} {
+        z-index: 3;
+      }
     }
-
-    > .${cellFrozen} {
-      z-index: 3;
+  }
+  &.top-summary-row-border {
+    @layer rdg.SummaryRow {
+      > .${cell} {
+        border-block-end: 2px solid var(--rdg-summary-border-color);
+      }
+    }
+  }
+  &.bottom-summary-row-border {
+    @layer rdg.SummaryRow {
+      > .${cell} {
+        border-block-start: 2px solid var(--rdg-summary-border-color);
+      }
     }
   }
 `;
@@ -61,10 +78,6 @@ export const bottomSummaryRowBorderClassname = css`
     }
   }
 `;
-
-const summaryRowClassname = `rdg-summary-row ${summaryRow}`;
-
-const topSummaryRowClassname = `rdg-top-summary-row ${topSummaryRow}`;
 
 function SummaryRow<R, SR>({
   rowIdx,
@@ -104,18 +117,18 @@ function SummaryRow<R, SR>({
   }
 
   return (
-    <div
+    <StyledSummaryRow
       role="row"
       aria-rowindex={ariaRowIndex}
       className={clsx(
         rowClassname,
         `rdg-row-${rowIdx % 2 === 0 ? 'even' : 'odd'}`,
-        summaryRowClassname,
+        'rdg-summary-row',
         {
           [rowSelectedClassname]: selectedCellIdx === -1,
-          [topSummaryRowClassname]: isTop,
-          [topSummaryRowBorderClassname]: isTop && showBorder,
-          [bottomSummaryRowBorderClassname]: !isTop && showBorder,
+          'rdg-top-summary-row': isTop,
+          'top-summary-row-border': isTop && showBorder,
+          'bottom-summary-row-border': !isTop && showBorder,
           'rdg-bottom-summary-row': !isTop
         }
       )}
@@ -128,7 +141,7 @@ function SummaryRow<R, SR>({
       }
     >
       {cells}
-    </div>
+    </StyledSummaryRow>
   );
 }
 

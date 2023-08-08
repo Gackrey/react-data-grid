@@ -1,31 +1,25 @@
 import { memo } from 'react';
-import { css } from '@linaria/core';
+import styled from 'styled-components';
 
 import { useRovingTabIndex } from './hooks';
 import { createCellEvent, getCellClassname, getCellStyle, isCellEditable } from './utils';
 import type { CellRendererProps } from './types';
 
-const cellCopied = css`
-  @layer rdg.Cell {
-    background-color: #ccccff;
+const StyledCell = styled.div`
+  &.rdg-cell-copied {
+    @layer rdg.Cell {
+      background-color: #ccccff;
+    }
   }
-`;
-
-const cellCopiedClassname = `rdg-cell-copied ${cellCopied}`;
-
-const cellDraggedOver = css`
-  @layer rdg.Cell {
-    background-color: #ccccff;
-
-    &.${cellCopied} {
+  &.rdg-cell-dragged-over {
+    @layer rdg.Cell {
       background-color: #9999ff;
     }
   }
 `;
 
-const cellDraggedOverClassname = `rdg-cell-dragged-over ${cellDraggedOver}`;
-
 function Cell<R, SR>({
+  dataKey,
   column,
   colSpan,
   isCellSelected,
@@ -34,6 +28,7 @@ function Cell<R, SR>({
   row,
   rowIdx,
   dragHandle,
+  showBorder,
   onClick,
   onDoubleClick,
   onContextMenu,
@@ -47,8 +42,9 @@ function Cell<R, SR>({
   const className = getCellClassname(
     column,
     {
-      [cellCopiedClassname]: isCopied,
-      [cellDraggedOverClassname]: isDraggedOver
+      'rdg-cell-copied': isCopied,
+      'rdg-cell-dragged-over': isDraggedOver,
+      'show-border': showBorder
     },
     typeof cellClass === 'function' ? cellClass(row) : cellClass
   );
@@ -90,7 +86,7 @@ function Cell<R, SR>({
   }
 
   return (
-    <div
+    <StyledCell
       role="gridcell"
       aria-colindex={column.idx + 1} // aria-colindex is 1-based
       aria-selected={isCellSelected}
@@ -105,15 +101,17 @@ function Cell<R, SR>({
       onFocus={onFocus}
       {...props}
     >
-      {column.renderCell({
-        column,
-        row,
-        isCellEditable: isEditable,
-        tabIndex: childTabIndex,
-        onRowChange: handleRowChange
-      })}
+      {column.render
+        ? column.render(row[dataKey], row, rowIdx)
+        : column.renderCell({
+            column,
+            row,
+            isCellEditable: isEditable,
+            tabIndex: childTabIndex,
+            onRowChange: handleRowChange
+          })}
       {dragHandle}
-    </div>
+    </StyledCell>
   );
 }
 

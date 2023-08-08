@@ -19,6 +19,7 @@ import HeaderFilters from './demos/HeaderFilters';
 import InfiniteScrolling from './demos/InfiniteScrolling';
 import MasterDetail from './demos/MasterDetail';
 import MillionCells from './demos/MillionCells';
+import MIPL from './demos/MIPL';
 import NoRows from './demos/NoRows';
 import ResizableGrid from './demos/Resizable';
 import RowsReordering from './demos/RowsReordering';
@@ -44,6 +45,7 @@ function Root() {
       <main className={mainClassname} dir={direction}>
         <Routes>
           <Route index element={<Navigate to="common-features" replace />} />
+          <Route path="mipl" element={<MIPL direction={direction} />} />
           <Route path="common-features" element={<CommonFeatures direction={direction} />} />
           <Route path="all-features" element={<AllFeatures direction={direction} />} />
           <Route path="cell-navigation" element={<CellNavigation direction={direction} />} />

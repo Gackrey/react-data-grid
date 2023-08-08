@@ -1,9 +1,35 @@
-import { css } from '@linaria/core';
+import styled from 'styled-components';
 import clsx from 'clsx';
 
 import type { RenderCheckboxProps } from '../types';
 
-const checkboxLabel = css`
+const StyledCheckboxInput = styled.input`
+  @layer rdg.CheckboxInput {
+    all: unset;
+  }
+`;
+
+const StyledCheckbox = styled.div`
+  @layer rdg.CheckboxIcon {
+    content: '';
+    inline-size: 20px;
+    block-size: 20px;
+    border: 2px solid var(--rdg-border-color);
+    background-color: var(--rdg-background-color);
+
+    ${StyledCheckboxInput}:checked + & {
+      background-color: var(--rdg-checkbox-color);
+      outline: 4px solid var(--rdg-background-color);
+      outline-offset: -6px;
+    }
+
+    ${StyledCheckboxInput}:focus + & {
+      border-color: var(--rdg-checkbox-focus-color);
+    }
+  }
+`;
+
+const StyledCheckboxLabel = styled.label`
   @layer rdg.CheckboxLabel {
     cursor: pointer;
     display: flex;
@@ -13,52 +39,18 @@ const checkboxLabel = css`
     inset: 0;
     margin-inline-end: 1px; /* align checkbox in row group cell */
   }
-`;
 
-const checkboxLabelClassname = `rdg-checkbox-label ${checkboxLabel}`;
+  &.rdg-checkbox-label-disabled {
+    @layer rdg.CheckboxLabel {
+      cursor: default;
 
-const checkboxInput = css`
-  @layer rdg.CheckboxInput {
-    all: unset;
-  }
-`;
-
-const checkboxInputClassname = `rdg-checkbox-input ${checkboxInput}`;
-
-const checkbox = css`
-  @layer rdg.CheckboxIcon {
-    content: '';
-    inline-size: 20px;
-    block-size: 20px;
-    border: 2px solid var(--rdg-border-color);
-    background-color: var(--rdg-background-color);
-
-    .${checkboxInput}:checked + & {
-      background-color: var(--rdg-checkbox-color);
-      outline: 4px solid var(--rdg-background-color);
-      outline-offset: -6px;
-    }
-
-    .${checkboxInput}:focus + & {
-      border-color: var(--rdg-checkbox-focus-color);
+      ${StyledCheckbox} {
+        border-color: var(--rdg-checkbox-disabled-border-color);
+        background-color: var(--rdg-checkbox-disabled-background-color);
+      }
     }
   }
 `;
-
-const checkboxClassname = `rdg-checkbox ${checkbox}`;
-
-const checkboxLabelDisabled = css`
-  @layer rdg.CheckboxLabel {
-    cursor: default;
-
-    .${checkbox} {
-      border-color: var(--rdg-checkbox-disabled-border-color);
-      background-color: var(--rdg-checkbox-disabled-background-color);
-    }
-  }
-`;
-
-const checkboxLabelDisabledClassname = `rdg-checkbox-label-disabled ${checkboxLabelDisabled}`;
 
 export function renderCheckbox({ onChange, ...props }: RenderCheckboxProps) {
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -66,18 +58,18 @@ export function renderCheckbox({ onChange, ...props }: RenderCheckboxProps) {
   }
 
   return (
-    <label
-      className={clsx(checkboxLabelClassname, {
-        [checkboxLabelDisabledClassname]: props.disabled
+    <StyledCheckboxLabel
+      className={clsx('rdg-checkbox-label', {
+        'rdg-checkbox-label-disabled': props.disabled
       })}
     >
-      <input
+      <StyledCheckboxInput
         type="checkbox"
         {...props}
-        className={checkboxInputClassname}
+        className="rdg-checkbox-input"
         onChange={handleChange}
       />
-      <div className={checkboxClassname} />
-    </label>
+      <StyledCheckbox className="rdg-checkbox" />
+    </StyledCheckboxLabel>
   );
 }

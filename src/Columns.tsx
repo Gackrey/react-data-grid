@@ -52,7 +52,7 @@ function SelectGroupFormatter(props: RenderGroupCellProps<unknown>) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const SelectColumn: Column<any, any> = {
   key: SELECT_COLUMN_KEY,
-  name: '',
+  title: '',
   width: 35,
   minWidth: 35,
   maxWidth: 35,

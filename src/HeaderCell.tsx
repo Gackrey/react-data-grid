@@ -1,4 +1,4 @@
-import { css } from '@linaria/core';
+import { styled } from 'styled-components';
 
 import { useRovingTabIndex } from './hooks';
 import { clampColumnWidth, getCellClassname, getCellStyle } from './utils';
@@ -6,7 +6,7 @@ import type { CalculatedColumn, SortColumn } from './types';
 import type { HeaderRowProps } from './HeaderRow';
 import defaultRenderHeaderCell from './renderHeaderCell';
 
-const cellResizable = css`
+const CellResizable = styled.div`
   @layer rdg.HeaderCell {
     touch-action: none;
 
@@ -22,8 +22,6 @@ const cellResizable = css`
   }
 `;
 
-const cellResizableClassname = `rdg-cell-resizable ${cellResizable}`;
-
 type SharedHeaderRowProps<R, SR> = Pick<
   HeaderRowProps<R, SR, React.Key>,
   | 'sortColumns'
@@ -38,6 +36,7 @@ export interface HeaderCellProps<R, SR> extends SharedHeaderRowProps<R, SR> {
   column: CalculatedColumn<R, SR>;
   colSpan: number | undefined;
   isCellSelected: boolean;
+  showBorder: boolean;
 }
 
 export default function HeaderCell<R, SR>({
@@ -49,7 +48,8 @@ export default function HeaderCell<R, SR>({
   onSortColumnsChange,
   selectCell,
   shouldFocusGrid,
-  direction
+  direction,
+  showBorder
 }: HeaderCellProps<R, SR>) {
   const isRtl = direction === 'rtl';
   const { tabIndex, childTabIndex, onFocus } = useRovingTabIndex(isCellSelected);
@@ -62,7 +62,8 @@ export default function HeaderCell<R, SR>({
     sortDirection && !priority ? (sortDirection === 'ASC' ? 'ascending' : 'descending') : undefined;
 
   const className = getCellClassname(column, column.headerCellClass, {
-    [cellResizableClassname]: column.resizable
+    'rdg-cell-resizable': column.resizable,
+    'show-border': showBorder
   });
 
   const renderHeaderCell = column.renderHeaderCell ?? defaultRenderHeaderCell;
@@ -163,7 +164,7 @@ export default function HeaderCell<R, SR>({
   }
 
   return (
-    <div
+    <CellResizable
       role="columnheader"
       aria-colindex={column.idx + 1}
       aria-selected={isCellSelected}
@@ -185,6 +186,6 @@ export default function HeaderCell<R, SR>({
         onSort,
         tabIndex: childTabIndex
       })}
-    </div>
+    </CellResizable>
   );
 }

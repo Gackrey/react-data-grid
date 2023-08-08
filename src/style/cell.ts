@@ -11,7 +11,7 @@ export const cell = css`
     position: relative; /* needed for absolute positioning to work */
     padding-block: 0;
     padding-inline: 8px;
-    border-inline-end: 1px solid var(--rdg-border-color);
+    border-inline-end: none;
     border-block-end: 1px solid var(--rdg-border-color);
     grid-row-start: var(--rdg-grid-row-start);
     background-color: inherit;
@@ -26,6 +26,14 @@ export const cell = css`
       outline: 2px solid var(--rdg-selection-color);
       outline-offset: -2px;
     }
+  }
+
+  &.rdg-cell {
+    color: rgba(0, 0, 0, 0.88);
+  }
+
+  &.show-border {
+    border-inline-end: 1px solid var(--rdg-border-color);
   }
 `;
 
